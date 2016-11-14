@@ -1,4 +1,10 @@
-package ass5test;
+/****************************************************************************
+ *
+ * Created by: Craig
+ * Created on: Nov 2016
+ * This program solves a maze.
+ * 
+ ****************************************************************************/
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -9,14 +15,14 @@ public class Mazifier {
 	public static void main(String[] args) throws IOException {
 		
 		FileReader fr = null;
-		String mazeFile = "Maze1.txt"; //CHANGE THIS CODE TO CHANGE WHICH MAZE YOU'RE SOLVING
+		String mazeFile = "Maze3.txt"; //CHANGE THIS CODE TO CHANGE WHICH MAZE YOU'RE SOLVING
 	    BufferedReader br = null;
 	    String line = "";
 	    
 	    fr = new FileReader(mazeFile);
 	    br = new BufferedReader(fr);
 	    
-	    line = br.readLine(); //reads first line of Maze1.txt
+	    line = br.readLine(); //reads first line of maze
         int i = (int) (line.length()); //array width should be the width of the first line
         System.out.println(i); //for debugging
         br.close();
@@ -27,8 +33,7 @@ public class Mazifier {
         br2.close();
         System.out.println(j);
         
-		char[][] maze = new char[i][j]; //2d maze array creation
-		char[][] mazeSolved = maze;
+		char[][] maze = new char[j][i]; //2d maze array creation
 	    char[] lineArray = new char[line.length()];
         
 	    BufferedReader br3 = new BufferedReader(new FileReader(mazeFile)); //new line reader so it starts at the beginning again
@@ -45,11 +50,8 @@ public class Mazifier {
             
         }
         br3.close();
-        
-        //HOOOOOOOOOLY HELL I DID IT
-        //the above section took me forever because i kept getting weird errors
-        //but alas, i solved the problem, even if not in the most efficient way.
-        //anyway, we continue:
+
+        //now that the maze has been created:
         int[] startPosition = new int[2];
         startPosition = FindStart(maze);
         
@@ -61,24 +63,10 @@ public class Mazifier {
         	//this occurs when everything worked correctly, we have a valid starting position, and the maze is ready to be solved.
         	System.out.println("Start Position: Maze Array at " + startPosition[0] + ", " + startPosition[1]); //debugging
         	
-        	mazeSolved = FindPath(maze, maze, startPosition[0], startPosition[1]);
+        	boolean mazeSolved = FindPath(maze, startPosition[0], startPosition[1]);
         	
-        	if (mazeSolved == maze){ //if solution finder did nothing
-        		System.out.println("A solution was not found :(");
-        		
-        		for(int x = 0; x < mazeSolved.length; x++) {
-        			
-        			line = ""; //resets "line" variable
-        			
-        			for(int y = 0; y < mazeSolved[0].length; y++) {
-        				
-                        line = line + mazeSolved[x][y]; 
-                        
-                    }
-        			System.out.println(line);
-        		}
-        		
-        	}
+        	if(mazeSolved){System.out.println("A solution was found!");}
+        	else{System.out.println("A solution was not found :(");}
         	
         }
 
@@ -107,7 +95,7 @@ public class Mazifier {
 		
 	}
 	
-	public static char[][] FindPath(char[][] currentMaze, char[][] originalMaze, int x, int y){
+	public static boolean FindPath(char[][] currentMaze, int x, int y){
 		
 		boolean solved = false;
 		
@@ -115,8 +103,6 @@ public class Mazifier {
 			
 			if(currentMaze[x][y] == 'G'){ //if goal found
 				solved = true;
-				
-				System.out.println("A solution was found!");
         		
         		for(int i = 0; i < currentMaze.length; i++) {
         			
@@ -130,50 +116,48 @@ public class Mazifier {
         			System.out.println(line);
         		}
 				
-				return currentMaze;
+				return solved;
 				
 			}
 			else if (currentMaze[x][y] == '#'){ //when you hit a wall
-				return currentMaze;
+				return solved;
 			}
-			else if (currentMaze[x][y] == '+'){
-				return currentMaze;
+			else if (currentMaze[x][y] == '+'){ //when you've already tried this route
+				return solved;
 			}
 			else if (currentMaze[x][y] == '.' || currentMaze[x][y] == 'S'){ //when there's an open path
 				
 				if (currentMaze[x][y] == 'S'){
-				} else {currentMaze[x][y] = '+';} //marks this as part of the solution path if it's not the starting point
+				} else {currentMaze[x][y] = '+';} //marks this as part of the tested path if it's not the starting point
 				
-				if (FindPath(currentMaze, originalMaze, x, y+1) != currentMaze){ //TEST NORTH
+				if (FindPath(currentMaze, x, y+1) == true){ //TEST NORTH
 					solved = true;
-					return currentMaze;
+					return solved;
 				}
-				else if (FindPath(currentMaze, originalMaze, x+1, y) != currentMaze){ //TEST EAST
+				else if (FindPath(currentMaze, x+1, y) == true){ //TEST EAST
 					solved = true;
-					return currentMaze;
+					return solved;
 				}
-				else if (FindPath(currentMaze, originalMaze, x, y-1) != currentMaze){ //TEST SOUTH
+				else if (FindPath(currentMaze, x, y-1) == true){ //TEST SOUTH
 					solved = true;
-					return currentMaze;
+					return solved;
 				}
-				else if (FindPath(currentMaze, originalMaze, x-1, y) != currentMaze){ //TEST WEST
+				else if (FindPath(currentMaze, x-1, y) == true){ //TEST WEST
 					solved = true;
-					return currentMaze;
+					return solved;
 				}
-				else {
+				else if (solved == false) {
 					if (currentMaze[x][y] == 'S'){
-					} else {currentMaze[x][y] = '.';} //deletes item from solution path if it isn't the starting point
-					return currentMaze;
+					} else {currentMaze[x][y] = '.';} //deletes item from solution path if it isn't the starting position
 				}
+				return solved;
 			}
 			
 		} else {
-			
-			//when out of bounds
-			
+			//when out of bounds, do nothing.
 		}
 
-		return currentMaze;
+		return solved;
 		
 	}
 
