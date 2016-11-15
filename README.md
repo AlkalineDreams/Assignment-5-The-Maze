@@ -2,7 +2,7 @@
 
 This program parses a text file into a 2D Character Array, finds its starting point, and uses recursion to check every possible route of movement until a solution is found, unless there are none.
 
-STYLE GUIDE:
+#STYLE GUIDE:
 
 'S' = Starting Point (there can only be one, and it must have one)
 
