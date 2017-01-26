@@ -14,4 +14,4 @@ This program parses a text file into a 2D Character Array, finds its starting po
 
 
 
-Also, your maze must have equal line lengths. You can't have the first line be "##S#." and the second line be "##". It won't work. Your maze must be a square.
+Also, your maze must have equal line lengths. You can't have the first line be "##S#." and the second line be "##". It won't work. Your maze must be a rectangle.
